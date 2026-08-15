@@ -33,7 +33,7 @@ function setupHeroSprite() {
     height: 110px;
     background-image: url('hero_sprite.png');
     background-size: 384px auto;
-    background-position: 0px -10px;
+    background-position: 0px 0px;
     background-repeat: no-repeat;
     image-rendering: pixelated;
     animation:
