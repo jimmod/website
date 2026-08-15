@@ -25,9 +25,10 @@ function setupHeroSprite() {
   heroSprite.style.cssText = `
     width: 96px;
     height: 96px;
-    background-image: url('hero_sprite.png');
-    background-size: 400% auto;
-    background-position: 0 0;
+    background-image: url('hero_idle.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
     image-rendering: pixelated;
     animation: hero-bob 1.2s ease-in-out infinite;
     filter: drop-shadow(0 4px 8px rgba(78,205,196,0.4));
