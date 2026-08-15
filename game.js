@@ -260,24 +260,38 @@ function inspectHero() {
 }
 
 // ── DIALOGUE SYSTEM ──────────────────────────────────────────
+let dialogueInterval = null;
+
 function showDialogue(speaker, text) {
-  const box = document.getElementById('dialogue-box');
+  const box  = document.getElementById('dialogue-box');
   const spkr = document.getElementById('dialogue-speaker');
-  const txt = document.getElementById('dialogue-text');
+  const txt  = document.getElementById('dialogue-text');
+
+  if (dialogueInterval) {
+    clearInterval(dialogueInterval);
+    dialogueInterval = null;
+  }
 
   spkr.textContent = speaker;
-  txt.textContent = '';
+  txt.textContent  = '';
   box.classList.remove('hidden');
 
   // Typewriter effect
   let i = 0;
-  const iv = setInterval(() => {
+  dialogueInterval = setInterval(() => {
     txt.textContent += text[i++];
-    if (i >= text.length) clearInterval(iv);
+    if (i >= text.length) {
+      clearInterval(dialogueInterval);
+      dialogueInterval = null;
+    }
   }, 22);
 }
 
 function closeDialogue() {
+  if (dialogueInterval) {
+    clearInterval(dialogueInterval);
+    dialogueInterval = null;
+  }
   document.getElementById('dialogue-box').classList.add('hidden');
 }
 
