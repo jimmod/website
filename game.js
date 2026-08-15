@@ -310,7 +310,7 @@ const TALK_LINES = [
   ["JIM", "I started coding as a teen. Best decision I ever made.\nWell... second best. First was marrying up. 😄"],
   ["JIM", "Android development is my craft. Kotlin is my spell book.\nJava is my ancient tome I still respect."],
   ["JIM", "The secret to 20+ years? Keep learning.\nEvery year there's something new to be bad at first."],
-  ["JIM", "Be good. Work hard. Play games. Love your family.\nThat's the whole strategy guide, honestly."],
+  ["JIM", "Be good. Be fair. Work hard. Love your family — and everyone else too.\nWe're all in the same party. That's the whole strategy guide."],
   ["JIM", "*looks at your code*\n...have you tried turning it off and on again?"],
   ["SYSTEM", "JIM has no more wisdom to share at this time.\nTry again after he's had more coffee."],
 ];
