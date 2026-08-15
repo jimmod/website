@@ -447,27 +447,6 @@ html, body {
   z-index: 300;
 }
 
-/* ── KEYBOARD KEY PARTICLES ─────────────────────────────────── */
-.key-particle {
-  position: fixed;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.38rem;
-  color: var(--teal);
-  text-shadow: 0 0 6px var(--teal);
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid var(--teal);
-  padding: 2px 4px;
-  pointer-events: none;
-  z-index: 300;
-  transform: translate(-50%, -50%);
-  animation: key-burst 0.8s ease-out forwards;
-}
-
-@keyframes key-burst {
-  0%   { transform: translate(-50%, -50%) translate(0, 0);                    opacity: 1; }
-  100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy));    opacity: 0; }
-}
-
 
 /* ── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 768px) {

@@ -275,9 +275,6 @@ function onHeroClick(e) {
   const msgs = ['OUCH!', '+1 KARMA', 'HEY!', '...', 'WHAT?', 'RUDE!', 'FINE!', '(ノ°Д°）ノ', '¯\\_(ツ)_/¯'];
   spawnFloatNum(e.clientX, e.clientY, msgs[Math.floor(Math.random() * msgs.length)]);
 
-  // Keyboard keys burst out
-  spawnKeyBurst(e.clientX, e.clientY);
-
   // EXP bar pulse
   pulseExpBar();
 
@@ -298,32 +295,6 @@ function spawnFloatNum(x, y, text) {
   el.style.top  = y + 'px';
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 1000);
-}
-
-// ── KEYBOARD KEY BURST ───────────────────────────────────────
-const KEY_SYMBOLS = ['[K]','[E]','[Y]','[/]','[\u21b5]','[ESC]','[>]','[<]','[!]','[FN]','[ALT]'];
-function spawnKeyBurst(cx, cy) {
-  const count = 6 + Math.floor(Math.random() * 4); // 6–9 keys
-  for (let i = 0; i < count; i++) {
-    const el = document.createElement('div');
-    el.className = 'key-particle';
-    el.textContent = KEY_SYMBOLS[Math.floor(Math.random() * KEY_SYMBOLS.length)];
-
-    // Random angle and distance
-    const angle = Math.random() * Math.PI * 2;
-    const dist  = 40 + Math.random() * 70;
-    const dx    = Math.cos(angle) * dist;
-    const dy    = Math.sin(angle) * dist;
-
-    el.style.left = cx + 'px';
-    el.style.top  = cy + 'px';
-    el.style.setProperty('--dx', dx + 'px');
-    el.style.setProperty('--dy', dy + 'px');
-    el.style.animationDelay = (Math.random() * 80) + 'ms';
-
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 900);
-  }
 }
 
 // ── EXP BAR PULSE ────────────────────────────────────────────
