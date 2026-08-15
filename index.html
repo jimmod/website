@@ -35,6 +35,12 @@
     <canvas id="star-canvas"></canvas>
 
     <div class="game-container">
+      <!-- TAB BAR -->
+      <nav class="tab-bar">
+        <button class="tab-btn active" id="tab-home" onclick="switchTab('home')">🏠 HOME</button>
+      </nav>
+      <!-- PANELS ROW -->
+      <div class="panels-row">
 
       <!-- LEFT: Hero Panel -->
       <div class="panel hero-panel">
@@ -190,9 +196,11 @@
           <span id="save-label">NO SAVE DATA</span>
           <button class="rpg-btn small" onclick="saveGame()">SAVE</button>
         </div>
-      </div>
+        </div><!-- end quest-panel -->
 
-    </div>
+      </div><!-- end panels-row -->
+
+    </div><!-- end game-container -->
 
     <!-- DIALOGUE BOX -->
     <div class="dialogue-box hidden" id="dialogue-box">
@@ -217,6 +225,12 @@
 
   </div><!-- end game-screen -->
 
+  <script>
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+    }
+  </script>
   <script src="game.js"></script>
 </body>
 </html>
