@@ -159,7 +159,7 @@ html, body {
 /* ── HERO SPRITE ─────────────────────────────────────────── */
 .hero-sprite-wrap {
   position: relative;
-  width: 96px; height: 110px;
+  width: 120px; height: 120px;
   cursor: pointer;
   margin: 4px 0;
 }

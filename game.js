@@ -19,41 +19,29 @@ function setupHeroSprite() {
   const wrap = document.getElementById('hero-sprite-wrap');
   const canvas = document.getElementById('hero-canvas');
 
-  heroSprite = document.createElement('div');
+  // Use a plain <img> and swap src between frames with setInterval.
+  // Dead simple, always works, looks great.
+  heroSprite = document.createElement('img');
   heroSprite.id = 'hero-sprite-div';
-
-  // CSS sprite sheet animation:
-  // hero_sprite.png is 1024px wide with 4 idle frames in row 0.
-  // Scale to background-size: 384px wide → each frame = 96px wide.
-  // Animate background-position-x from 0 → -384px in 4 steps.
-  // The label text "Idle 4 frames" occupies ~28px at the top of the sheet.
-  // Scaled offset: 28 × (384/1024) ≈ 10px — so start at y=-10px.
+  heroSprite.src = 'hero_f1.png';
   heroSprite.style.cssText = `
-    width: 96px;
-    height: 110px;
-    background-image: url('hero_sprite.png');
-    background-size: 384px auto;
-    background-position: 0px 0px;
-    background-repeat: no-repeat;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
     image-rendering: pixelated;
-    animation:
-      hero-idle 0.65s steps(4) infinite,
-      hero-bob  1.8s ease-in-out infinite;
-    filter: drop-shadow(0 6px 10px rgba(78,205,196,0.5));
+    display: block;
+    animation: hero-bob 1.8s ease-in-out infinite;
+    filter: drop-shadow(0 6px 12px rgba(78,205,196,0.5));
   `;
 
-  // Inject keyframes once
+  // Inject CSS keyframes once
   if (!document.getElementById('hero-anim-style')) {
     const style = document.createElement('style');
     style.id = 'hero-anim-style';
     style.textContent = `
-      @keyframes hero-idle {
-        from { background-position-x: 0px; }
-        to   { background-position-x: -384px; }
-      }
       @keyframes hero-bob {
         0%, 100% { transform: translateY(0px); }
-        50%       { transform: translateY(-6px); }
+        50%       { transform: translateY(-7px); }
       }
       @keyframes hero-shake {
         0%, 100% { transform: translateX(0) rotate(0); }
@@ -62,28 +50,21 @@ function setupHeroSprite() {
         60%       { transform: translateX(-4px) rotate(-2deg); }
         80%       { transform: translateX(4px)  rotate(2deg); }
       }
-      @keyframes hero-glow {
-        0%, 100% { filter: drop-shadow(0 6px 10px rgba(78,205,196,0.5)); }
-        50%       { filter: drop-shadow(0 0 22px rgba(78,205,196,1)) brightness(1.4); }
-      }
     `;
     document.head.appendChild(style);
   }
 
   wrap.replaceChild(heroSprite, canvas);
 
-  // Fallback if sprite fails to load
-  const testImg = new Image();
-  testImg.onerror = () => {
-    heroSprite.style.display = 'none';
-    const c = document.createElement('canvas');
-    c.width = 96; c.height = 96;
-    c.style.cssText = 'animation: hero-bob 1.8s ease-in-out infinite; image-rendering: pixelated;';
-    wrap.appendChild(c);
-    drawFallbackHero(c.getContext('2d'));
-  };
-  testImg.src = 'hero_sprite.png';
+  // Cycle between 2 idle frames every 400ms
+  const frames = ['hero_f1.png', 'hero_f2.png'];
+  let fi = 0;
+  setInterval(() => {
+    fi = (fi + 1) % frames.length;
+    heroSprite.src = frames[fi];
+  }, 400);
 }
+
 
 // Minimal pixel-art fallback
 function drawFallbackHero(ctx) {
