@@ -306,7 +306,7 @@ function spawnFloatNum(x, y, text) {
 const TALK_LINES = [
   ["JIM", "Hey! Welcome to my little corner of the internet.\nMake yourself at home. Don't break anything."],
   ["JIM", "20+ years of writing code and I still get excited\nwhen something compiles on the first try. Rare drops."],
-  ["JIM", "Main quest: ship products that actually matter.\nFamily and gaming? Essential buffs. Can't grind without them."],
+  ["JIM", "I build things to make the world a little better.\nGaming recharges me, family keeps me grounded — both fuel the mission."],
   ["JIM", "I started coding as a teen. Best decision I ever made.\nWell... second best. First was marrying up. 😄"],
   ["JIM", "Android development is my craft. Kotlin is my spell book.\nJava is my ancient tome I still respect."],
   ["JIM", "The secret to 20+ years? Keep learning.\nEvery year there's something new to be bad at first."],
