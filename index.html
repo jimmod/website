@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jimmod.com — Android Wizard</title>
+  <meta name="description" content="Jim's personal corner of the internet. Veteran Android engineer, gamer, family guy, forever learner." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- BOOT SCREEN -->
+  <div id="boot-screen">
+    <div class="boot-content">
+      <div class="boot-logo">JIMMOD<span class="blink">.</span>COM</div>
+      <div class="boot-sub">© 1989–2026 Jim Industries Ltd.</div>
+      <div class="boot-bar-label">LOADING HERO DATA...</div>
+      <div class="boot-bar-wrap">
+        <div class="boot-bar" id="boot-bar"></div>
+      </div>
+      <div class="boot-percent" id="boot-percent">0%</div>
+      <div class="boot-press" id="boot-press" style="display:none">▶ PRESS ANY KEY TO CONTINUE</div>
+    </div>
+  </div>
+
+  <!-- MAIN GAME SCREEN -->
+  <div id="game-screen" class="hidden">
+
+    <!-- Scanline overlay -->
+    <div class="scanlines"></div>
+
+    <!-- Stars background -->
+    <canvas id="star-canvas"></canvas>
+
+    <div class="game-container">
+
+      <!-- LEFT: Hero Panel -->
+      <div class="panel hero-panel">
+        <div class="panel-title">★ PLAYER ONE ★</div>
+
+        <div class="hero-sprite-wrap" id="hero-sprite-wrap" title="Click me!">
+          <canvas id="hero-canvas" width="96" height="96"></canvas>
+          <div class="hero-shadow"></div>
+        </div>
+
+        <div class="hero-name">J I M</div>
+        <div class="hero-class">[ ANDROID WIZARD ]</div>
+        <div class="hero-level">LVL <span id="lvl-count">1</span> <span class="lvl-arrow">▲</span></div>
+
+        <div class="exp-bar-wrap">
+          <div class="exp-label">EXP</div>
+          <div class="exp-bar-track">
+            <div class="exp-bar" id="exp-bar"></div>
+          </div>
+        </div>
+
+        <div class="hp-mp-wrap">
+          <div class="hp-row">
+            <span class="stat-lbl">HP</span>
+            <span class="hp-hearts" id="hp-hearts">♥♥♥♥♥</span>
+            <span class="hp-num">MAX</span>
+          </div>
+          <div class="hp-row">
+            <span class="stat-lbl">MP</span>
+            <span class="mp-dots">◆◆◆◆◆</span>
+            <span class="hp-num">∞</span>
+          </div>
+        </div>
+
+        <div class="action-btns">
+          <button class="rpg-btn" id="btn-talk" onclick="talkToHero()">[ TALK ]</button>
+          <button class="rpg-btn" id="btn-inspect" onclick="inspectHero()">[ INSPECT ]</button>
+        </div>
+      </div>
+
+      <!-- CENTER: Stats Panel -->
+      <div class="panel stats-panel">
+        <div class="panel-title">─── STATUS ───</div>
+
+        <div class="stats-list">
+          <div class="stat-row" data-tooltip="Measured in Stack Overflow tabs">
+            <span class="stat-icon">⚔</span>
+            <span class="stat-name">STR</span>
+            <span class="stat-bar-wrap"><div class="stat-bar" style="width:80%"></div></span>
+            <span class="stat-val">80</span>
+          </div>
+          <div class="stat-row" data-tooltip="Coffee-driven processing unit">
+            <span class="stat-icon">✦</span>
+            <span class="stat-name">INT</span>
+            <span class="stat-bar-wrap"><div class="stat-bar gold" style="width:99%"></div></span>
+            <span class="stat-val">99</span>
+          </div>
+          <div class="stat-row" data-tooltip="20+ years of bug slaying">
+            <span class="stat-icon">◉</span>
+            <span class="stat-name">EXP</span>
+            <span class="stat-bar-wrap"><div class="stat-bar teal" style="width:95%"></div></span>
+            <span class="stat-val">20+</span>
+          </div>
+          <div class="stat-row" data-tooltip="Family quest: NEVER ENDING">
+            <span class="stat-icon">♥</span>
+            <span class="stat-name">LOVE</span>
+            <span class="stat-bar-wrap"><div class="stat-bar pink" style="width:100%"></div></span>
+            <span class="stat-val">MAX</span>
+          </div>
+          <div class="stat-row" data-tooltip="Respawn count: 0">
+            <span class="stat-icon">✿</span>
+            <span class="stat-name">GOOD</span>
+            <span class="stat-bar-wrap"><div class="stat-bar green" style="width:92%"></div></span>
+            <span class="stat-val">S</span>
+          </div>
+          <div class="stat-row" data-tooltip="Skill cap: not found">
+            <span class="stat-icon">★</span>
+            <span class="stat-name">LEARN</span>
+            <span class="stat-bar-wrap"><div class="stat-bar purple" style="width:100%"></div></span>
+            <span class="stat-val">∞</span>
+          </div>
+        </div>
+
+        <div class="divider">─────────────────</div>
+
+        <div class="panel-title" style="margin-top:8px">─── EQUIPPED ───</div>
+        <div class="equipment-list">
+          <div class="equip-row">
+            <span class="equip-icon">🗡</span>
+            <span class="equip-name">Mechanical Keyboard+5</span>
+          </div>
+          <div class="equip-row">
+            <span class="equip-icon">🤖</span>
+            <span class="equip-name">Android SDK (enchanted)</span>
+          </div>
+          <div class="equip-row">
+            <span class="equip-icon">☕</span>
+            <span class="equip-name">Infinite Coffee Flask</span>
+          </div>
+          <div class="equip-row">
+            <span class="equip-icon">🎮</span>
+            <span class="equip-name">Controller of Destiny</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Quests & Traits Panel -->
+      <div class="panel quest-panel">
+        <div class="panel-title">─── TRAITS ───</div>
+
+        <div class="trait-list">
+          <div class="trait-chip gaming">🎮 GAMER</div>
+          <div class="trait-chip family">♥ FAMILY MAN</div>
+          <div class="trait-chip learning">📚 FOREVER LEARNER</div>
+          <div class="trait-chip good">✨ GOOD PERSON</div>
+          <div class="trait-chip android">🤖 ANDROID WIZARD</div>
+          <div class="trait-chip veteran">🏅 20+ YR VETERAN</div>
+        </div>
+
+        <div class="divider">─────────────────</div>
+
+        <div class="panel-title" style="margin-top:8px">─ SIDE QUESTS ─</div>
+        <div class="quest-list">
+          <div class="quest-item completed">
+            <span class="quest-status">✔</span>
+            <span class="quest-text">Survive the Y2K Bug</span>
+          </div>
+          <div class="quest-item completed">
+            <span class="quest-status">✔</span>
+            <span class="quest-text">Ship 10 Android Apps</span>
+          </div>
+          <div class="quest-item completed">
+            <span class="quest-status">✔</span>
+            <span class="quest-text">Keep Family Happy</span>
+          </div>
+          <div class="quest-item active">
+            <span class="quest-status blink">►</span>
+            <span class="quest-text">Learn Something New</span>
+          </div>
+          <div class="quest-item active">
+            <span class="quest-status blink">►</span>
+            <span class="quest-text">Be Good Every Day</span>
+          </div>
+          <div class="quest-item locked">
+            <span class="quest-status">?</span>
+            <span class="quest-text">???  ???  ???</span>
+          </div>
+        </div>
+
+        <div class="divider">─────────────────</div>
+        <div class="save-row">
+          <span class="save-icon">💾</span>
+          <span id="save-label">NO SAVE DATA</span>
+          <button class="rpg-btn small" onclick="saveGame()">SAVE</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DIALOGUE BOX -->
+    <div class="dialogue-box hidden" id="dialogue-box">
+      <div class="dialogue-speaker" id="dialogue-speaker">JIM</div>
+      <div class="dialogue-text" id="dialogue-text"></div>
+      <div class="dialogue-close blink" onclick="closeDialogue()">▼ CLOSE</div>
+    </div>
+
+    <!-- TOOLTIP -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- SECRET ACHIEVEMENT TOAST -->
+    <div class="achievement-toast hidden" id="achievement-toast">
+      <div class="achievement-inner">
+        <span class="ach-icon">🏆</span>
+        <div>
+          <div class="ach-title">ACHIEVEMENT UNLOCKED</div>
+          <div class="ach-sub" id="ach-sub-text"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end game-screen -->
+
+  <script src="game.js"></script>
+</body>
+</html>
