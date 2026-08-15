@@ -3,89 +3,110 @@
    Boot sequence, sprite animation, interactions, easter eggs
    ============================================================ */
 
-// ── SPRITE SHEET SETUP ──────────────────────────────────────
-const SPRITE_SRC = 'hero_sprite.png';
-const SPRITE_IMG = new Image();
-SPRITE_IMG.src = SPRITE_SRC;
+// ── SPRITE DISPLAY SETUP ────────────────────────────────────
+// We display the hero sprite as a CSS-animated <div> with the
+// sprite sheet as background, cropped to just the first idle frame.
+// The generated sheet is 1024x1024 with:
+//   Row 0: 4 idle frames  → each frame is 1024/4 = 256px wide, ~256px tall
+//   Row 1: 8 walk frames  → each 128px wide
+//   Row 2: attack frames
+// We show frame 0 of idle row and apply CSS animation for life.
 
-// Sprite sheet regions (x, y, w, h) — mapped from generated sheet
-// Row 0: Idle (4 frames, ~256x128 each quarter of 1024 wide image)
-// Row 1: Walking (8 frames)
-// Row 2: Attack/Casting (8 frames)
-// The generated image is 1024x1024, so each cell is roughly:
-// Idle: 4 frames → each ~256 wide, top quarter (~256 tall)
-// We'll define simplified sprite slices:
-const FRAME_W = 64;
-const FRAME_H = 96;
+let heroSprite;  // the <div> hero display element
+let currentAnim = 'idle'; // track state for shake/glow effects
 
-// Since the actual sprite sheet varies, we'll map visible "poses" as
-// canvas drawings of the sprite at known regions:
-const ANIM = {
-  idle:    { frames: 4, row: 0, fps: 6  },
-  walk:    { frames: 8, row: 1, fps: 12 },
-  attack:  { frames: 4, row: 2, fps: 10 },
-};
+function setupHeroSprite() {
+  // Replace the canvas with a styled div for the sprite
+  const wrap = document.getElementById('hero-sprite-wrap');
+  const canvas = document.getElementById('hero-canvas');
 
-let currentAnim = 'idle';
-let frameIndex   = 0;
-let lastFrameTime = 0;
-let heroCanvas, heroCtx;
-let spriteReady = false;
-let sheetCols = 4; // idle has 4 per row
-const SHEET_CELL_W = 256;
-const SHEET_CELL_H = 345;
+  heroSprite = document.createElement('div');
+  heroSprite.id = 'hero-sprite-div';
+  heroSprite.style.cssText = `
+    width: 96px;
+    height: 96px;
+    background-image: url('hero_sprite.png');
+    background-size: 400% auto;
+    background-position: 0 0;
+    image-rendering: pixelated;
+    animation: hero-bob 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(78,205,196,0.4));
+  `;
 
-SPRITE_IMG.onload = () => {
-  spriteReady = true;
-  requestAnimationFrame(animateHero);
-};
-SPRITE_IMG.onerror = () => {
-  // fallback: draw a simple pixel hero
-  spriteReady = false;
-  requestAnimationFrame(animateHero);
-};
-
-function animateHero(ts) {
-  if (!heroCtx) { requestAnimationFrame(animateHero); return; }
-  const anim = ANIM[currentAnim];
-  const ms_per_frame = 1000 / anim.fps;
-
-  if (ts - lastFrameTime > ms_per_frame) {
-    frameIndex = (frameIndex + 1) % anim.frames;
-    lastFrameTime = ts;
-    drawHeroFrame(anim);
+  // Add CSS keyframe for bob animation
+  if (!document.getElementById('hero-anim-style')) {
+    const style = document.createElement('style');
+    style.id = 'hero-anim-style';
+    style.textContent = `
+      @keyframes hero-bob {
+        0%, 100% { transform: translateY(0px); }
+        50%       { transform: translateY(-5px); }
+      }
+      @keyframes hero-shake {
+        0%, 100% { transform: translateX(0) rotate(0); }
+        20%       { transform: translateX(-5px) rotate(-3deg); }
+        40%       { transform: translateX(5px) rotate(3deg); }
+        60%       { transform: translateX(-4px) rotate(-2deg); }
+        80%       { transform: translateX(4px) rotate(2deg); }
+      }
+      @keyframes hero-glow {
+        0%, 100% { filter: drop-shadow(0 4px 8px rgba(78,205,196,0.4)); }
+        50%       { filter: drop-shadow(0 0 20px rgba(78,205,196,0.9)) brightness(1.3); }
+      }
+    `;
+    document.head.appendChild(style);
   }
-  requestAnimationFrame(animateHero);
+
+  wrap.replaceChild(heroSprite, canvas);
+
+  // Verify image loads; if not, fall back to drawn canvas
+  const testImg = new Image();
+  testImg.onload = () => { /* sprite loaded fine */ };
+  testImg.onerror = () => {
+    // Fallback: use a pixel-art canvas
+    heroSprite.style.display = 'none';
+    const c = document.createElement('canvas');
+    c.width = 96; c.height = 96;
+    c.style.cssText = 'animation: hero-bob 1.2s ease-in-out infinite; image-rendering: pixelated;';
+    wrap.appendChild(c);
+    const ctx = c.getContext('2d');
+    drawFallbackHero(ctx);
+  };
+  testImg.src = 'hero_sprite.png';
 }
 
-function drawHeroFrame(anim) {
-  heroCtx.clearRect(0, 0, 96, 96);
-
-  if (spriteReady) {
-    // Source rect in sprite sheet
-    const sx = frameIndex * SHEET_CELL_W;
-    const sy = anim.row   * SHEET_CELL_H;
-    const sw = SHEET_CELL_W;
-    const sh = SHEET_CELL_H;
-    heroCtx.drawImage(SPRITE_IMG, sx, sy, sw, sh, 0, 0, 96, 96);
-  } else {
-    drawFallbackHero(heroCtx, frameIndex);
-  }
-}
-
-// Minimal pixel-art fallback if sprite doesn't load
-function drawFallbackHero(ctx, frame) {
+// Minimal pixel-art fallback
+function drawFallbackHero(ctx) {
+  // Hoodie body
   ctx.fillStyle = '#2d3561';
-  ctx.fillRect(30, 10, 36, 50); // body
-  ctx.fillStyle = '#e8c99a';
-  ctx.fillRect(33, 8, 30, 22);  // head
+  ctx.fillRect(28, 36, 40, 44);
+  // Head
+  ctx.fillStyle = '#c8a07a';
+  ctx.fillRect(30, 12, 36, 28);
+  // Hair
+  ctx.fillStyle = '#4a2c0a';
+  ctx.fillRect(28, 10, 40, 10);
+  // Glasses
   ctx.fillStyle = '#1a1a2e';
-  ctx.fillRect(38, 14, 6, 4);   // glasses
+  ctx.fillRect(32, 22, 10, 7);
+  ctx.fillRect(54, 22, 10, 7);
   ctx.fillStyle = '#4ecdc4';
-  ctx.fillRect(38, 22, 4, 1);   // glasses reflection
-  ctx.fillStyle = '#333';
-  ctx.fillRect(24, 60, 18, 24 + (frame % 2 === 0 ? 0 : -4)); // left leg
-  ctx.fillRect(54, 60, 18, 24 + (frame % 2 === 0 ? -4 : 0)); // right leg
+  ctx.fillRect(32, 22, 10, 2);
+  ctx.fillRect(54, 22, 10, 2);
+  // Hoodie pocket
+  ctx.fillStyle = '#1e2440';
+  ctx.fillRect(36, 58, 24, 14);
+  // Legs
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(30, 80, 16, 14);
+  ctx.fillRect(50, 80, 16, 14);
+  // Keyboard (weapon)
+  ctx.fillStyle = '#555';
+  ctx.fillRect(70, 44, 22, 10);
+  ctx.fillStyle = '#4ecdc4';
+  ctx.fillRect(72, 46, 4, 2);
+  ctx.fillRect(78, 46, 4, 2);
+  ctx.fillRect(84, 46, 4, 2);
 }
 
 // ── BOOT SEQUENCE ───────────────────────────────────────────
@@ -155,8 +176,7 @@ document.addEventListener('click', (e) => {
 
 // ── GAME START ──────────────────────────────────────────────
 function onGameStart() {
-  heroCanvas = document.getElementById('hero-canvas');
-  heroCtx    = heroCanvas.getContext('2d');
+  setupHeroSprite();
 
   initStars();
   animateLevelCount();
@@ -254,25 +274,30 @@ let clickCount = 0;
 function onHeroClick(e) {
   clickCount++;
 
-  // Bounce the hero panel
-  const wrap = document.getElementById('hero-sprite-wrap');
-  wrap.style.animation = 'shake 0.4s ease';
-  setTimeout(() => { wrap.style.animation = ''; }, 400);
+  // Shake the sprite
+  if (heroSprite) {
+    heroSprite.style.animation = 'hero-shake 0.4s ease';
+    setTimeout(() => { heroSprite.style.animation = 'hero-bob 1.2s ease-in-out infinite'; }, 400);
+  }
 
   // Float a damage number
-  spawnFloatNum(e.clientX, e.clientY, ['OUCH!', '+1 KARMA', 'HEY!', '...', 'WHAT?', 'RUDE!', 'FINE!', '(ノ°Д°）ノ', '¯\\_(ツ)_/¯'][Math.floor(Math.random()*9)]);
+  const msgs = ['OUCH!', '+1 KARMA', 'HEY!', '...', 'WHAT?', 'RUDE!', 'FINE!', '(ノ°Д°）ノ', '¯\\_(ツ)_/¯'];
+  spawnFloatNum(e.clientX, e.clientY, msgs[Math.floor(Math.random() * msgs.length)]);
 
-  // Play attack anim
-  currentAnim = 'attack';
-  frameIndex  = 0;
-  setTimeout(() => { currentAnim = 'idle'; frameIndex = 0; }, 800);
+  // Brief glow on attack
+  if (heroSprite) {
+    setTimeout(() => {
+      heroSprite.style.animation = 'hero-glow 0.4s ease';
+      setTimeout(() => { heroSprite.style.animation = 'hero-bob 1.2s ease-in-out infinite'; }, 800);
+    }, 400);
+  }
 
   // Special: at 5 clicks
   if (clickCount === 5) {
     showAchievement('BUTTON MASHER', 'You clicked Jim 5 times.\nHe is unimpressed but curious.');
   }
   if (clickCount === 10) {
-    showDialogue('JIM', "OK ok I get it. You like clicking things.\nMaybe try making your OWN website instead? 😄");
+    showDialogue('JIM', 'OK ok I get it. You like clicking things.\nMaybe try making your OWN website instead? 😄');
   }
 }
 
