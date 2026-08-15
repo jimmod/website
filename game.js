@@ -329,7 +329,7 @@ function talkToHero() {
 const INSPECT_LINES = [
   "A seasoned engineer. He smells faintly of coffee\nand fresh compile warnings.",
   "His keyboard is worn in all the right places.\n'CTRL', 'Z', and 'S' are nearly invisible.",
-  "Level 42. Class: Android Wizard.\nSpecial ability: Debugging by intuition.",
+  "Level 42. Class: Coding Wizard.\nSpecial ability: Debugging by intuition.",
   "He carries a battered controller wherever he goes.\nIt is his lucky charm.",
   "Passive trait: FOREVER LEARNER\n↳ Skill cap: undefined",
   "Status: Online\nMood: Curious\nHP: Full\nLast saved: Unknown",
