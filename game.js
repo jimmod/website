@@ -268,20 +268,18 @@ function onHeroClick(e) {
   // Shake the sprite
   if (heroSprite) {
     heroSprite.style.animation = 'hero-shake 0.4s ease';
-    setTimeout(() => { heroSprite.style.animation = 'hero-bob 1.2s ease-in-out infinite'; }, 400);
+    setTimeout(() => { heroSprite.style.animation = 'hero-bob 1.8s ease-in-out infinite'; }, 450);
   }
 
   // Float a damage number
   const msgs = ['OUCH!', '+1 KARMA', 'HEY!', '...', 'WHAT?', 'RUDE!', 'FINE!', '(ノ°Д°）ノ', '¯\\_(ツ)_/¯'];
   spawnFloatNum(e.clientX, e.clientY, msgs[Math.floor(Math.random() * msgs.length)]);
 
-  // Brief glow on attack
-  if (heroSprite) {
-    setTimeout(() => {
-      heroSprite.style.animation = 'hero-glow 0.4s ease';
-      setTimeout(() => { heroSprite.style.animation = 'hero-bob 1.2s ease-in-out infinite'; }, 800);
-    }, 400);
-  }
+  // Keyboard keys burst out
+  spawnKeyBurst(e.clientX, e.clientY);
+
+  // EXP bar pulse
+  pulseExpBar();
 
   // Special: at 5 clicks
   if (clickCount === 5) {
@@ -300,6 +298,50 @@ function spawnFloatNum(x, y, text) {
   el.style.top  = y + 'px';
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 1000);
+}
+
+// ── KEYBOARD KEY BURST ───────────────────────────────────────
+const KEY_SYMBOLS = ['[K]','[E]','[Y]','[/]','[\u21b5]','[ESC]','[>]','[<]','[!]','[FN]','[ALT]'];
+function spawnKeyBurst(cx, cy) {
+  const count = 6 + Math.floor(Math.random() * 4); // 6–9 keys
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'key-particle';
+    el.textContent = KEY_SYMBOLS[Math.floor(Math.random() * KEY_SYMBOLS.length)];
+
+    // Random angle and distance
+    const angle = Math.random() * Math.PI * 2;
+    const dist  = 40 + Math.random() * 70;
+    const dx    = Math.cos(angle) * dist;
+    const dy    = Math.sin(angle) * dist;
+
+    el.style.left = cx + 'px';
+    el.style.top  = cy + 'px';
+    el.style.setProperty('--dx', dx + 'px');
+    el.style.setProperty('--dy', dy + 'px');
+    el.style.animationDelay = (Math.random() * 80) + 'ms';
+
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 900);
+  }
+}
+
+// ── EXP BAR PULSE ────────────────────────────────────────────
+let expPulsing = false;
+function pulseExpBar() {
+  if (expPulsing) return;
+  expPulsing = true;
+  const bar = document.getElementById('exp-bar');
+  const orig = bar.style.width || '78%';
+  bar.style.transition = 'width 0.15s ease';
+  bar.style.width = '100%';
+  bar.style.boxShadow = '0 0 16px var(--gold)';
+  setTimeout(() => {
+    bar.style.transition = 'width 0.6s ease';
+    bar.style.width = orig;
+    bar.style.boxShadow = '';
+    setTimeout(() => { expPulsing = false; }, 700);
+  }, 300);
 }
 
 // ── TALK DIALOGUE ────────────────────────────────────────────
