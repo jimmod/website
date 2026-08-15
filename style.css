@@ -435,8 +435,13 @@ html, body {
 .float-num {
   position: fixed;
   font-size: 0.7rem;
-  color: var(--gold);
-  text-shadow: 0 0 8px var(--gold);
+  color: #ffffff;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0 0 10px var(--teal);
   pointer-events: none;
   animation: float-up 1s ease forwards;
   z-index: 300;
